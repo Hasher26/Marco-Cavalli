@@ -14,7 +14,7 @@ const spalten = kategorien.filter((k) => k.zeichnung && k.zeichnung !== 'keine')
 let heroSvg = heroSvgRaw;
 for (const z of ['anzug', 'mantel', 'hemd', 'fliege', 'schuhe']) {
   const k = spalten.find((x) => x.zeichnung === z);
-  heroSvg = heroSvg.replace(`__HREF_${z}__`, k ? `/${k.slug}/` : '#kollektion');
+  heroSvg = heroSvg.replaceAll(`__HREF_${z}__`, k ? `/${k.slug}/` : '#kollektion');
 }
 const anzugKat = spalten.find((k) => k.zeichnung === 'anzug') || kategorien[0];
 
@@ -103,7 +103,7 @@ const hours = { von: o.von, bis: o.bis, sVon: s.sonntag?.von || '13:00', sBis: s
         {s.filialen.map((f) => (
           <article class="store">
             <div><h3>{f.strasse}</h3><p class="addr">{f.ort.replace('Dreieich', 'Dreieich-Sprendlingen')}</p></div>
-            <span class="status" data-status>Öffnungszeiten werden geprüft …</span>
+            <span class="status" data-status>Geöffnet {o.tage} {zeit(o.von)} – {o.bis} Uhr</span>
             <dl class="hours"><dt>{o.tage}</dt><dd>{zeit(o.von)} – {o.bis} Uhr</dd><dt>Sonntag</dt><dd>geschlossen*</dd></dl>
             <div class="acts">
               <a class="btn fill" href={routeLink(f)}><Fragment set:html={PIN} />Route planen</a>
