@@ -35,11 +35,21 @@ const form = (error = '') => page(`<form method="post">
 // Gleich lange Hashes vergleichen, damit die Prüfzeit nichts über das Passwort verrät
 const same = (a, b) => timingSafeEqual(createHash('sha256').update(String(a)).digest(), createHash('sha256').update(String(b)).digest());
 
+// Umgebungsvariablen lesen (neue Netlify-Schnittstelle, sonst klassisch über process.env)
+const env = (key) => {
+  try {
+    const v = globalThis.Netlify?.env?.get?.(key);
+    if (v) return v;
+  } catch (e) { /* ältere Laufzeit */ }
+  return process.env[key];
+};
+
 export default async (req) => {
-  const password = process.env.ADMIN_PASSWORD;
-  const token = process.env.GITHUB_TOKEN;
-  if (!password || !token) {
-    return page('<div class="box"><h1>MARCO CAVALLI</h1><p class="err">Der Admin-Login ist noch nicht eingerichtet (ADMIN_PASSWORD und GITHUB_TOKEN in Netlify fehlen).</p></div>');
+  const password = (env('ADMIN_PASSWORD') || '').trim();
+  const token = (env('GITHUB_TOKEN') || '').trim();
+  const missing = [!password && 'ADMIN_PASSWORD', !token && 'GITHUB_TOKEN'].filter(Boolean);
+  if (missing.length) {
+    return page(`<div class="box"><h1>MARCO CAVALLI</h1><p class="err">Der Admin-Login ist noch nicht eingerichtet. In Netlify fehlt: ${missing.join(' und ')}.</p></div>`);
   }
   if (req.method !== 'POST') return form();
 
