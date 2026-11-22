@@ -1,0 +1,9 @@
+name: Schuh Schwarz
+bild: ''
+kategorie: content/kategorien/schuhe.yml
+unterkategorie: ''
+farbe: content/farben/schwarz.yml
+fuer: herren
+uebergroesse: false
+preis: ''
+sichtbar: true

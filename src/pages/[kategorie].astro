@@ -1,0 +1,114 @@
+---
+import Base from '../layouts/Base.astro';
+import { settings, kategorien, produkteVon, unterVon, farbe, telLink, routeLink } from '../lib/data.js';
+import { PIN, HEART } from '../components/Icons.js';
+
+export function getStaticPaths() {
+  return kategorien.map((k) => ({ params: { kategorie: k.slug }, props: { k } }));
+}
+const { k } = Astro.props;
+const s = settings;
+const o = s.oeffnungszeiten;
+const items = produkteVon(k.slug);
+const arten = unterVon(k.slug).filter((u) => items.some((p) => p.unterkategorie === u.slug)).map((u) => [u.slug, u.name]);
+const farbSlugs = [...new Set(items.map((p) => p.farbe))];
+const farben = Object.fromEntries(farbSlugs.map((f) => [f, [farbe(f).name, farbe(f).farbcode]]));
+const fuer = k.filter_herren_kinder && items.some((p) => p.fuer === 'kinder');
+const ug = k.filter_uebergroesse && items.some((p) => p.uebergroesse);
+const cfg = {
+  slug: k.slug, single: k.einzahl, plural: k.name, fuer, ug, arten, farben: farbSlugs,
+  p: items.map((p) => ({ key: p.slug, name: p.name, bild: p.bild || '', preis: p.preis || '', art: p.unterkategorie, farbe: p.farbe, fuer: p.fuer, ug: !!p.uebergroesse })),
+};
+---
+<Base title={`${k.name} – Marco Cavalli Dreieich`} description={k.seo_beschreibung || k.intro} current={`/${k.slug}/`}>
+  <main class="catpage">
+    <p class="crumb"><a href="/">Startseite</a> / {k.name}</p>
+    <h1>{k.name}</h1>
+    {k.intro && <p class="intro">{k.intro}</p>}
+
+    {items.length > 0 ? (
+      <Fragment>
+        <div class="filters" role="group" aria-label="Filter">
+          {(fuer || ug) && <div class="frow" id="f-fuer"><span class="lab">Für</span></div>}
+          {arten.length > 1 && <div class="frow" id="f-art"><span class="lab">Art</span></div>}
+          {farbSlugs.length > 1 && <div class="frow" id="f-farbe"><span class="lab">Farbe</span></div>}
+        </div>
+        <div class="meta"><span id="count" aria-live="polite">{items.length} {items.length === 1 ? k.einzahl : k.name}</span><button class="reset" id="reset" type="button" hidden>Filter zurücksetzen</button></div>
+        <div class="grid" id="grid">
+          {items.map((p) => (
+            <article class="card">
+              {p.bild ? <img class="ph" src={p.bild} alt={p.name} loading="lazy" style="object-fit:cover;width:100%;padding:0" /> : <div class="ph"><span>Foto folgt</span></div>}
+              <h2>{p.name}</h2>
+              <p><span class="sw" style={`background:${farbe(p.farbe).farbcode}`}></span>{farbe(p.farbe).name}</p>
+              {p.preis && <p class="price">{p.preis}</p>}
+            </article>
+          ))}
+        </div>
+      </Fragment>
+    ) : (
+      <p class="empty" style="margin-top:32px">Hier zeigen wir bald unsere {k.name}. Kommen Sie gern vorbei – im Laden finden Sie die ganze Auswahl.</p>
+    )}
+
+    <section class="visit" aria-label="Filialen">
+      <div><h2>Im Laden anprobieren</h2><p>Kommen Sie ohne Termin vorbei. {o.tage} {o.von.replace(/^0/, '')} – {o.bis} Uhr, Parkplätze direkt vor Ort.</p></div>
+      {s.filialen.map((f) => (
+        <div><h3>{f.strasse}</h3><p>{f.ort} · <a href={telLink(f.telefon)}>{f.telefon}</a></p><a class="btn fill" href={routeLink(f)}><Fragment set:html={PIN} />Route planen</a></div>
+      ))}
+    </section>
+    <p class="proto">Tipp: Merken Sie sich Ihre Favoriten und zeigen Sie die <a href="/merkliste/">Merkliste</a> einfach im Laden vor.</p>
+  </main>
+
+  <script is:inline define:vars={{ C: cfg, FARB: farben, HEART }}>
+    if (C.p.length) {
+      const st = { fuer: 'alle', ug: false, art: new Set(), farbe: new Set() };
+      const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      const row = (id) => document.getElementById(id);
+      const chip = (label, pressed, onClick, swatch, extra) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'chip' + (extra ? ' ' + extra : ''); b.setAttribute('aria-pressed', pressed);
+        b.innerHTML = (swatch ? `<span class="sw" style="background:${esc(swatch)}"></span>` : '') + esc(label);
+        b.addEventListener('click', onClick); return b;
+      };
+      const toggle = (set, k) => { set.has(k) ? set.delete(k) : set.add(k); render(); };
+      const drawFilters = () => {
+        document.querySelectorAll('.frow .chip').forEach((c) => c.remove());
+        if (C.fuer) [['alle', 'Alle'], ['herren', 'Herren'], ['kinder', 'Kinder']].forEach(([k, l]) => row('f-fuer').append(chip(l, st.fuer === k, () => { st.fuer = k; render(); })));
+        if (C.ug) row('f-fuer').append(chip('Übergrößen bis 80', st.ug, () => { st.ug = !st.ug; render(); }, null, C.fuer ? 'ug' : ''));
+        if (row('f-art')) C.arten.forEach(([k, l]) => row('f-art').append(chip(l, st.art.has(k), () => toggle(st.art, k))));
+        if (row('f-farbe')) C.farben.forEach((k) => row('f-farbe').append(chip(FARB[k][0], st.farbe.has(k), () => toggle(st.farbe, k), FARB[k][1])));
+      };
+      const reset = () => { st.fuer = 'alle'; st.ug = false; st.art.clear(); st.farbe.clear(); render(); };
+      const render = () => {
+        drawFilters();
+        const list = C.p.filter((p) => (st.fuer === 'alle' || p.fuer === st.fuer) && (!st.ug || p.ug) &&
+          (!st.art.size || st.art.has(p.art)) && (!st.farbe.size || st.farbe.has(p.farbe)));
+        const g = row('grid');
+        g.innerHTML = list.length ? list.map((p) => {
+          const f = FARB[p.farbe];
+          const img = p.bild ? `<img class="ph" src="${esc(p.bild)}" alt="${esc(p.name)}" loading="lazy" style="object-fit:cover;width:100%;padding:0">`
+            : `<div class="ph"><span>Foto folgt</span>${p.ug ? '<span class="tag">bis Gr. 80</span>' : ''}</div>`;
+          return `<article class="card">${img}<h2>${esc(p.name)}</h2><p><span class="sw" style="background:${esc(f[1])}"></span>${esc(f[0])}</p>${p.preis ? `<p class="price">${esc(p.preis)}</p>` : ''}
+            <button class="fav" type="button" data-id="${esc(p.key)}" aria-pressed="${MC_FAV.has(p.key)}">${HEART}<span>${MC_FAV.has(p.key) ? 'Gemerkt' : 'Merken'}</span></button></article>`;
+        }).join('') : `<p class="empty">Keine ${esc(C.plural)} für diese Auswahl. <button class="reset" type="button" data-reset>Filter zurücksetzen</button></p>`;
+        row('count').textContent = list.length + ' ' + (list.length === 1 ? C.single : C.plural);
+        row('reset').hidden = !(st.fuer !== 'alle' || st.ug || st.art.size || st.farbe.size);
+        g.querySelector('[data-reset]')?.addEventListener('click', reset);
+        g.querySelectorAll('.fav').forEach((b) => b.addEventListener('click', () => {
+          const p = C.p.find((x) => x.key === b.dataset.id), f = FARB[p.farbe];
+          const on = MC_FAV.toggle({ id: p.key, title: p.name, farbe: f[0], hex: f[1], cat: C.plural, page: '/' + C.slug + '/' });
+          b.setAttribute('aria-pressed', on); b.querySelector('span').textContent = on ? 'Gemerkt' : 'Merken';
+        }));
+      };
+      row('reset').addEventListener('click', reset);
+      const applyHash = () => {
+        const h = decodeURIComponent(location.hash.slice(1));
+        if (h === 'kinder' && C.fuer) st.fuer = 'kinder';
+        else if (h === 'uebergroesse' && C.ug) st.ug = true;
+        else if (C.arten.some((a) => a[0] === h)) { st.art.clear(); st.art.add(h); }
+      };
+      applyHash();
+      addEventListener('hashchange', () => { st.fuer = 'alle'; st.ug = false; st.art.clear(); st.farbe.clear(); applyHash(); render(); });
+      render();
+    }
+  </script>
+</Base>

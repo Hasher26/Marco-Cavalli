@@ -1,0 +1,198 @@
+---
+import Base from '../layouts/Base.astro';
+import { settings, kategorien, unterkategorien, produkte, telLink, waLink, routeLink } from '../lib/data.js';
+import { PIN } from '../components/Icons.js';
+import heroSvgRaw from '../components/hero-svg.html.txt?raw';
+import heroJs from '../components/hero.js.txt?raw';
+
+const s = settings;
+const o = s.oeffnungszeiten;
+const zeit = (t) => String(t).replace(/^0/, '');
+
+// Kategorien mit Zeichnung bilden die Spalten der Animation (max. 5)
+const spalten = kategorien.filter((k) => k.zeichnung && k.zeichnung !== 'keine').slice(0, 5);
+let heroSvg = heroSvgRaw;
+for (const z of ['anzug', 'mantel', 'hemd', 'fliege', 'schuhe']) {
+  const k = spalten.find((x) => x.zeichnung === z);
+  heroSvg = heroSvg.replace(`__HREF_${z}__`, k ? `/${k.slug}/` : '#kollektion');
+}
+const anzugKat = spalten.find((k) => k.zeichnung === 'anzug') || kategorien[0];
+
+// Startseiten-Kacheln: Unterkategorien mit Haken „Als Kachel auf der Startseite zeigen“
+const kacheln = unterkategorien.filter((u) => u.startseite && kategorien.some((k) => k.slug === u.kategorie));
+// Kinder: Kategorien mit Kinder-Produkten
+const kinderKats = kategorien.filter((k) => produkte.some((p) => p.kategorie === k.slug && p.fuer === 'kinder'));
+
+const faq = [
+  ['Was kostet ein Anzug bei Marco Cavalli?', `${s.preis_hinweis}.`],
+  ['Welche Größen gibt es?', 'Wir führen ein breites Größenangebot – auch Übergrößen bis Größe 80.'],
+  ['Welche Anzüge führt ihr?', 'Zweiteiler, Dreiteiler mit Weste, Doppelreiher, Smoking, Hochzeitsanzüge und den traditionellen kurdischen Anzug Şal û Şapik – auch in Übergrößen bis 80 und als Kinder- und Jungenanzüge. Sakkos, Westen und Anzughosen gibt es auch einzeln. Dazu Mäntel, Hemden, Schuhe und Accessoires wie Gürtel, Hosenträger, Socken, Krawatten mit Einstecktuch, Fliegen, Krawattenhalter und -nadeln, Manschettenknöpfe, Ketten und Ansteckblumen.'],
+  ['Brauche ich einen Termin?', 'Nein. Kommen Sie einfach während der Öffnungszeiten in eine unserer Filialen.'],
+  ['Bietet ihr Maßanzüge oder Änderungen an?', 'Nein, wir fertigen keine Maßanzüge und bieten keinen Änderungsservice an. Dank der großen Größenauswahl finden die meisten Kunden ihren Anzug direkt von der Stange.'],
+  ['Wie komme ich zu euch?', s.anfahrt + '.'],
+  ['Wann habt ihr geöffnet?', `${o.tage} von ${zeit(o.von)} bis ${o.bis} Uhr. ${s.sonntag?.hinweis || ''}`],
+  ['Verkauft ihr auch an Händler?', 'Ja. Händler und Großhandelskunden schreiben uns am einfachsten per WhatsApp.'],
+];
+
+const dayMap = { Mo: 'Monday', Di: 'Tuesday', Mi: 'Wednesday', Do: 'Thursday', Fr: 'Friday', Sa: 'Saturday', So: 'Sunday' };
+const ld = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Organization', '@id': '#org', name: 'Malik Moden GmbH', brand: { '@type': 'Brand', name: 'Marco Cavalli' }, email: s.email },
+    ...s.filialen.map((f) => ({
+      '@type': 'ClothingStore', name: `Marco Cavalli – ${f.name}`, parentOrganization: { '@id': '#org' }, telephone: f.telefon, priceRange: 'ab 120 €',
+      address: { '@type': 'PostalAddress', streetAddress: f.strasse, postalCode: f.ort.split(' ')[0], addressLocality: f.ort.split(' ').slice(1).join(' '), addressCountry: 'DE' },
+      openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'].map((d) => dayMap[d]), opens: o.von, closes: o.bis }],
+    })),
+    { '@type': 'FAQPage', mainEntity: faq.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+  ],
+};
+const hours = { von: o.von, bis: o.bis, sVon: s.sonntag?.von || '13:00', sBis: s.sonntag?.bis || '18:00', termine: (s.sonntag?.termine || []).map((d) => new Date(d).toISOString().slice(0, 10)) };
+---
+<Base
+  title={`Marco Cavalli – Herrenausstatter in Dreieich | ${s.preis_hinweis}`}
+  description={`Marco Cavalli in Dreieich-Sprendlingen: Anzüge der eigenen Marke – ${s.preis_hinweis}, Smoking, Hochzeitsanzüge, kurdische Anzüge, Übergrößen bis 80. Zwei Filialen, ohne Termin.`}
+  floatingHeader
+>
+  <Fragment slot="head">
+    <script is:inline>{ if (matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('still'); }</script>
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  </Fragment>
+
+  <div class="wrap" id="wrap">
+    <div class="stage" id="stage">
+      <div class="copy" id="copy">
+        <p class="k">Herrenausstatter in Dreieich-Sprendlingen</p>
+        <h1>Eleganz muss nicht teuer sein.</h1>
+        <p class="lead">Anzüge unserer eigenen Marke Marco Cavalli: {s.preis_hinweis}, auch in Übergrößen bis Größe 80. Persönlich beraten in unseren {['', 'einer', 'zwei', 'drei', 'vier'][s.filialen.length] || s.filialen.length} {s.filialen.length === 1 ? 'Filiale' : 'Filialen'}.</p>
+        <p class="lead-m">{s.preis_hinweis} · Übergrößen bis 80</p>
+        <div class="row">
+          <a class="btn fill" href="#filialen"><Fragment set:html={PIN} />Route planen</a>
+          <a class="btn ghost" href="#filialen">Anrufen</a>
+        </div>
+        <nav aria-label="Kollektion">{kategorien.map((k) => <a href={`/${k.slug}/`}>{k.name}</a>)}<a href="#kinder">Kinder</a></nav>
+      </div>
+      <div class="figbox" id="figbox" aria-hidden="true"></div>
+
+      <div class="cols" id="cols" style={`--n:${spalten.length};--rows:${Math.ceil(spalten.length / 2)}`}>
+        {spalten.map((k) => (
+          <div class="col" data-k={k.zeichnung}>
+            <div class="slot"></div>
+            <div class="txt">
+              <h2>{k.name}</h2>
+              {k.kurztext && <p class="d">{k.kurztext}</p>}
+              {k.preis_hinweis && <p class="price">{k.preis_hinweis}</p>}
+              <a class="more" href={`/${k.slug}/`}>Alle {k.name} →</a>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Fragment set:html={heroSvg} />
+
+      <a class="skip" href="#kollektion">Animation überspringen</a>
+      <p class="hint" id="hint">Scrollen</p>
+    </div>
+    <div id="kollektion" style="position:absolute;bottom:0;height:100vh;height:100svh;pointer-events:none"></div>
+  </div>
+
+  <div id="home">
+    <section class="band" id="filialen">
+      <div class="head"><div><p class="eyebrow">Besuchen Sie uns</p><h2>Unsere Filialen</h2></div><p>Beide Filialen liegen in Dreieich-Sprendlingen und führen die komplette Marco-Cavalli-Kollektion. Einfach vorbeikommen – ohne Termin.</p></div>
+      <div class="stores">
+        {s.filialen.map((f) => (
+          <article class="store">
+            <div><h3>{f.strasse}</h3><p class="addr">{f.ort.replace('Dreieich', 'Dreieich-Sprendlingen')}</p></div>
+            <span class="status" data-status>Öffnungszeiten werden geprüft …</span>
+            <dl class="hours"><dt>{o.tage}</dt><dd>{zeit(o.von)} – {o.bis} Uhr</dd><dt>Sonntag</dt><dd>geschlossen*</dd></dl>
+            <div class="acts">
+              <a class="btn fill" href={routeLink(f)}><Fragment set:html={PIN} />Route planen</a>
+              <a class="btn ghost" href={telLink(f.telefon)}>Anrufen</a>
+              {f.whatsapp && <a class="btn ghost" href={waLink(f.telefon)}>WhatsApp</a>}
+            </div>
+            <p class="num">Telefon{f.whatsapp ? ' & WhatsApp' : ''}: <a href={telLink(f.telefon)}>{f.telefon}</a></p>
+            <p class="way">{s.anfahrt}</p>
+          </article>
+        ))}
+      </div>
+      <p class="small">* {s.sonntag?.hinweis}</p>
+    </section>
+
+    {kacheln.length > 0 && (
+      <section class="band" id="anzuege">
+        <div class="head"><div><p class="eyebrow">Unsere {anzugKat.name}</p><h2>Der richtige Anzug für Sie</h2></div><p>Alle Modelle unserer Marke Marco Cavalli – {s.preis_hinweis}, auch in Übergrößen bis 80.</p></div>
+        <div class="occ cats">
+          {kacheln.map((u) => (
+            <a href={`/${u.kategorie}/#${u.slug}`}>
+              {u.bild ? <img class="ph" src={u.bild} alt={u.name} loading="lazy" style="object-fit:cover;width:100%;padding:0" /> : <div class="ph">Foto: {u.name}</div>}
+              <h3>{u.name}</h3>{u.kurztext && <p>{u.kurztext}</p>}<span class="go">Ansehen →</span>
+            </a>
+          ))}
+        </div>
+        <p class="small"><a href={`/${anzugKat.slug}/`}>Alle {anzugKat.name} mit Filter nach Art und Farbe ansehen →</a></p>
+      </section>
+    )}
+
+    {kinderKats.length > 0 && (
+      <section class="band" id="kinder">
+        <div class="head"><div><p class="eyebrow">Für Kinder</p><h2>Kinder &amp; Jungen</h2></div><p>Damit auch die Kleinen bei Hochzeit, Konfirmation und Familienfest gut aussehen.</p></div>
+        <div class="occ kids">
+          {kinderKats.map((k) => (
+            <a href={`/${k.slug}/#kinder`}><div class="ph">Foto: Kinder – {k.name}</div><h3>Kinder – {k.name}</h3><p>{k.name} für Jungen und Kinder.</p><span class="go">Ansehen →</span></a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section class="band" id="warum">
+      <div class="head"><div><p class="eyebrow">Warum Marco Cavalli</p><h2>Eleganz, die bezahlbar bleibt</h2></div></div>
+      <div class="why">
+        <div><h3>Unsere eigene Marke</h3><p>Marco Cavalli ist die Eigenmarke der Malik Moden GmbH aus Dreieich. Deshalb bekommen Sie bei uns den {s.preis_hinweis.replace(/^Komplettanzug/, 'Komplettanzug schon')}.</p></div>
+        <div><h3>Große Auswahl</h3><p>Vom Zweiteiler bis zum Smoking, für Herren und Jungen – dazu Mäntel, Hemden, Schuhe und Accessoires.</p></div>
+        <div><h3>Bis Größe 80</h3><p>Auch in Übergrößen finden Sie bei uns einen Anzug, der sitzt – persönlich beraten, ohne Termin.</p></div>
+      </div>
+    </section>
+
+    <section class="band" id="fragen">
+      <div class="head"><div><p class="eyebrow">Gut zu wissen</p><h2>Häufige Fragen</h2></div></div>
+      <div class="faq">
+        {faq.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+      </div>
+    </section>
+
+    {s.grosshandel_whatsapp && (
+      <section class="band" id="grosshandel">
+        <div class="trade"><div><h3>Händler &amp; Großhandel</h3><p>Sie möchten Marco Cavalli in Ihrem Geschäft anbieten? Schreiben Sie uns per WhatsApp – wir melden uns schnell zurück.</p></div><a class="btn fill" href={waLink(s.grosshandel_whatsapp)}>Anfrage per WhatsApp</a></div>
+      </section>
+    )}
+  </div>
+
+  <script is:inline set:html={heroJs} />
+  <script is:inline define:vars={{ hours }}>
+    {
+      // Öffnungsstatus nach deutscher Zeit (inkl. verkaufsoffener Sonntage aus dem Admin-Bereich)
+      const fmt = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', weekday: 'short', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+      const p = Object.fromEntries(fmt.formatToParts(new Date()).map((x) => [x.type, x.value]));
+      const DAYS = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+      const day = DAYS.indexOf(p.weekday.replace('.', '')), min = (+p.hour % 24) * 60 + +p.minute;
+      const today = `${p.year}-${p.month}-${p.day}`;
+      const m = (t) => { const [h, mm] = String(t).split(':'); return +h * 60 + +mm; };
+      const sunday = day === 0 && hours.termine.includes(today);
+      const von = sunday ? m(hours.sVon) : m(hours.von), bis = sunday ? m(hours.sBis) : m(hours.bis);
+      const workday = (day >= 1 && day <= 6) || sunday;
+      const isOpen = workday && min >= von && min < bis;
+      const hhmm = (x) => `${Math.floor(x / 60)}:${String(x % 60).padStart(2, '0')}`;
+      let text;
+      if (isOpen) text = `Jetzt geöffnet · bis ${hhmm(bis)} Uhr`;
+      else if (workday && min < von) text = `Geschlossen · öffnet heute um ${hhmm(von)} Uhr`;
+      else text = `Geschlossen · öffnet ${day === 6 || day === 0 ? 'Montag' : 'morgen'} um ${hhmm(m(hours.von))} Uhr`;
+      document.querySelectorAll('[data-status]').forEach((el) => { el.textContent = text; el.classList.add(isOpen ? 'open' : 'closed'); });
+    }
+    {
+      // Kopfzeile und Schnellleiste erst nach der Animation zeigen
+      const q = document.getElementById('quick'), w = document.getElementById('wrap'), hd = document.getElementById('sitehead');
+      const sync = () => { const past = w.getBoundingClientRect().bottom < innerHeight * .6; q.classList.toggle('show', past); hd.classList.toggle('show', past); };
+      addEventListener('scroll', sync, { passive: true }); addEventListener('resize', sync); sync();
+    }
+  </script>
+</Base>

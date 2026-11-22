@@ -1,0 +1,9 @@
+name: Schuh Braun
+bild: ''
+kategorie: content/kategorien/schuhe.yml
+unterkategorie: ''
+farbe: content/farben/braun.yml
+fuer: herren
+uebergroesse: false
+preis: ''
+sichtbar: true

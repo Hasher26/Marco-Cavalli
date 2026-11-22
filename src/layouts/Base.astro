@@ -1,0 +1,57 @@
+---
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/cormorant-garamond/600.css';
+import '@fontsource/cormorant-garamond/700.css';
+import '@fontsource/manrope/400.css';
+import '@fontsource/manrope/500.css';
+import '@fontsource/manrope/600.css';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { settings, waLink } from '../lib/data.js';
+import { PIN } from '../components/Icons.js';
+const { title, description = '', current = '', floatingHeader = false, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const wa = settings.filialen.find((f) => f.whatsapp)?.telefon;
+---
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  {description && <meta name="description" content={description} />}
+  {noindex && <meta name="robots" content="noindex" />}
+  <link rel="canonical" href={canonical} />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <meta property="og:title" content={title} />
+  {description && <meta property="og:description" content={description} />}
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="de_DE" />
+  <slot name="head" />
+  <script is:inline>
+    {
+      // Merkliste: bleibt nur im Browser des Besuchers gespeichert
+      const KEY = 'mc-merkliste';
+      window.MC_FAV = {
+        get() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } },
+        set(list) { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} window.MC_FAV.badge(); },
+        has(id) { return window.MC_FAV.get().some((x) => x.id === id); },
+        toggle(item) { const l = window.MC_FAV.get(); const i = l.findIndex((x) => x.id === item.id); i >= 0 ? l.splice(i, 1) : l.push(item); window.MC_FAV.set(l); return i < 0; },
+        badge() { const n = window.MC_FAV.get().length; document.querySelectorAll('[data-favcount]').forEach((b) => { b.textContent = n; b.hidden = !n; }); }
+      };
+      document.addEventListener('DOMContentLoaded', window.MC_FAV.badge);
+      addEventListener('storage', window.MC_FAV.badge);
+    }
+  </script>
+</head>
+<body>
+  <Header current={current} floating={floatingHeader} />
+  <nav class:list={['quick', { show: !floatingHeader }]} id="quick" aria-label="Schnellzugriff">
+    <a href="/#filialen"><Fragment set:html={PIN} />Route &amp; Filialen</a>
+    {wa && <a href={waLink(wa)}>WhatsApp</a>}
+  </nav>
+  <slot />
+  <Footer />
+</body>
+</html>

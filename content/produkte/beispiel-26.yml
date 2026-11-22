@@ -1,0 +1,9 @@
+name: Manschettenknöpfe Gold
+bild: ''
+kategorie: content/kategorien/accessoires.yml
+unterkategorie: content/unterkategorien/manschettenknoepfe.yml
+farbe: content/farben/gold.yml
+fuer: herren
+uebergroesse: false
+preis: ''
+sichtbar: true

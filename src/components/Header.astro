@@ -1,0 +1,27 @@
+---
+import { kategorien } from '../lib/data.js';
+import { PIN, HEART } from './Icons.js';
+const { current = '', floating = false } = Astro.props;
+const links = [
+  ...kategorien.map((k) => ({ href: `/${k.slug}/`, label: k.name })),
+  { href: '/#kinder', label: 'Kinder' },
+  { href: '/#filialen', label: 'Filialen' },
+];
+---
+<header class:list={['site-head', { floating }]} id="sitehead">
+  <div class="in">
+    <a class="logo" href="/" aria-label="Marco Cavalli – zur Startseite">MARCO CAVALLI<small>Exclusive</small></a>
+    <nav class="main" aria-label="Hauptmenü">
+      {links.map((l) => <a href={l.href} aria-current={l.href === current ? 'page' : undefined}>{l.label}</a>)}
+    </nav>
+    <a class="fav-link" href="/merkliste/" aria-label="Merkliste"><Fragment set:html={HEART} /><span>Merkliste</span><b data-favcount hidden>0</b></a>
+    <a class="btn fill hbtn" href="/#filialen"><Fragment set:html={PIN} />Route planen</a>
+    <details class="menu">
+      <summary aria-label="Menü öffnen">Menü</summary>
+      <nav aria-label="Menü">
+        {links.map((l) => <a href={l.href}>{l.label}</a>)}
+        <a href="/merkliste/">Merkliste</a><a href="/#filialen">Route planen</a>
+      </nav>
+    </details>
+  </div>
+</header>
