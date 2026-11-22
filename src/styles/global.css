@@ -251,3 +251,5 @@ footer.foot{border-top:1px solid var(--line)}
 .fav-link{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--muted);text-decoration:none;font-size:14px;flex:none}
 
 .fav-link b[hidden]{display:none}
+.foot .legal .admin-link{color:#8F877A;text-decoration:none}
+.foot .legal .admin-link:hover{color:var(--gold)}
