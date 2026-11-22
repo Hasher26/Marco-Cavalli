@@ -1,0 +1,9 @@
+name: Schuh Cognac
+bild: ''
+kategorie: content/kategorien/schuhe.yml
+unterkategorie: ''
+farbe: content/farben/cognac.yml
+fuer: herren
+uebergroesse: false
+preis: ''
+sichtbar: true

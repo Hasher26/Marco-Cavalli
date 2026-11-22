@@ -1,0 +1,37 @@
+preis_hinweis: Komplettanzug ab 120 €
+oeffnungszeiten:
+  tage: Mo – Sa
+  von: 09:30
+  bis: '18:45'
+sonntag:
+  hinweis: An verkaufsoffenen Sonntagen haben wir zusätzlich geöffnet.
+  von: '13:00'
+  bis: '18:00'
+  termine: []
+filialen:
+- name: Lise-Meitner-Straße
+  strasse: Lise-Meitner-Straße 8
+  ort: 63303 Dreieich
+  telefon: +49 178 8894615
+  whatsapp: true
+- name: Otto-Hahn-Straße
+  strasse: Otto-Hahn-Straße 12
+  ort: 63303 Dreieich
+  telefon: +49 176 20562583
+  whatsapp: true
+anfahrt: Parkplätze direkt vor Ort · Bus OF-64, Haltestelle „Sprendlingen Einsteinstraße“
+  – wenige Gehminuten
+email: malikmoden@hotmail.de
+grosshandel_whatsapp: +49 178 8894615
+social:
+- name: Instagram @malikmoden
+  url: https://www.instagram.com/malikmoden/
+- name: Instagram @raffandtaff786
+  url: https://www.instagram.com/raffandtaff786/
+- name: TikTok @marco.cavalli5
+  url: https://www.tiktok.com/@marco.cavalli5
+- name: TikTok @malik_moden
+  url: https://www.tiktok.com/@malik_moden
+impressum:
+  anschrift: '[Geschäftsanschrift]'
+  ust_id: '[folgt]'

@@ -1,0 +1,119 @@
+
+{
+  const root = document.documentElement;
+  const svg = document.getElementById('svg'), wrap = document.getElementById('wrap'), stage = document.getElementById('stage');
+  const figbox = document.getElementById('figbox'), copy = document.getElementById('copy');
+  const hint = document.getElementById('hint'), wm = document.getElementById('wm');
+  const lapL = document.getElementById('lapL'), lapR = document.getElementById('lapR'), bow = document.getElementById('bow'), bowd = document.getElementById('bowd');
+  const dots = [...document.querySelectorAll('#dots circle')];
+  const studs = document.querySelector('.studs');
+  let parts = [...svg.querySelectorAll('.part')];
+  const cols = Object.fromEntries([...document.querySelectorAll('.col')].map((c) => [c.dataset.k, { slot: c.querySelector('.slot'), txt: c.querySelector('.txt') }]));
+  // Zeichnungen ohne passende Kategorie ausblenden
+  parts = parts.filter((p) => cols[p.dataset.k] || (p.remove(), false));
+  parts.forEach((p) => p.setAttribute('tabindex', '-1')); // dieselben Ziele sind als Textlinks im HTML erreichbar
+
+  const clamp = (v) => Math.min(1, Math.max(0, v));
+  const ease = (t) => t < .5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2;
+  const seg = (p, a, b) => ease(clamp((p - a) / (b - a)));
+  const mix = (a, b, t) => a + (b - a) * t;
+  const mixArr = (A, B, t) => A.map((v, i) => mix(v, B[i], t));
+  const mixPts = (A, B, t) => A.map((q, i) => mixArr(q, B[i], t));
+  const path = (P) => 'M' + P.map((q) => q[0].toFixed(2) + ' ' + q[1].toFixed(2)).join(' L') + ' Z';
+
+  // Logo -> Smoking
+  const LOGO_L = [[127.25, 111.75], [93.5, 161.25], [146.38, 230.63], [199.25, 300]];
+  const SUIT_L = [[176, 84], [130, 104], [142, 168], [198, 330]];
+  const mirror = (P) => P.map(([x, y]) => [400 - x, y]);
+  const LOGO_R = mirror(LOGO_L), SUIT_R = mirror(SUIT_L);
+  const BOW = [[188, 92], [212, 92], [253.25, 59.25], [253.25, 128.25], [212, 107], [188, 107], [146.75, 128.25], [146.75, 59.25]];
+  const BOW_S = BOW.map(([x, y]) => [200 + (x - 200) * .42, 90 + (y - 99.75) * .42]);
+  const FLY = [[-240, -150, -40], [270, -30, 60], [-190, 250, 30]];
+
+  // Welt-Ausschnitte und Umrisse der Teile im zusammengesetzten Zustand [x, y, b, h]
+  const CAM1 = [40, 30, 320, 420], CAM2 = [40, 52, 320, 800];
+  const BOX = { mantel: [76, 84, 248, 568], anzug: [74, 84, 252, 716], hemd: [76, 66, 248, 344], fliege: [177.6, 73, 44.8, 29], schuhe: [100, 801, 200, 36] };
+  const MAXS = { mantel: 1, anzug: 1, hemd: 1, fliege: 3.4, schuhe: 1.5 };
+
+  const lines = parts.map((p) => {
+    const win = p.dataset.win;
+    if (!win) return [];
+    const [a, b] = win.split(',').map(Number);
+    const els = [...p.querySelectorAll('.ln')];
+    return els.map((el, i) => {
+      el.style.strokeDasharray = '1 1';
+      const span = (b - a) * .55, s = a + (b - a - span) * (i / Math.max(1, els.length - 1));
+      return { el, a: s, b: s + span, fill: el.classList.contains('fl') };
+    });
+  });
+
+  // Weltausschnitt w in Bildschirm-Rechteck r (relativ zur SVG) einpassen
+  const fit = (w, r) => {
+    const k = Math.min(r.width / w[2], r.height / w[3]);
+    return { k, x0: w[0] + w[2] / 2 - (r.left + r.width / 2) / k, y0: w[1] + w[3] / 2 - (r.top + r.height / 2) / k };
+  };
+  const rel = (el, base) => { const a = el.getBoundingClientRect(); return { left: a.left - base.left, top: a.top - base.top, width: a.width, height: a.height }; };
+
+  const still = root.classList.contains('still');
+  const paint = (p) => {
+    const sb = svg.getBoundingClientRect();
+    let R = rel(figbox, sb);
+    if (!R.width || !R.height || still) R = { left: 0, top: 0, width: sb.width, height: Math.min(sb.height, 600) };
+    const z = seg(p, .08, .40), m = seg(p, .12, .40), e = seg(p, .66, .88);
+    const cam = mixArr(CAM1, CAM2, z), M = fit(cam, R), M2 = fit(CAM2, R);
+    svg.setAttribute('viewBox', [M.x0, M.y0, sb.width / M.k, sb.height / M.k].map((n) => n.toFixed(2)).join(' '));
+
+    lapL.setAttribute('d', path(mixPts(LOGO_L, SUIT_L, m)));
+    lapR.setAttribute('d', path(mixPts(LOGO_R, SUIT_R, m)));
+    bow.setAttribute('d', path(mixPts(BOW, BOW_S, m)));
+    bowd.style.opacity = seg(p, .36, .46);
+    dots.forEach((d, i) => {
+      const f = seg(p, .04 + i * .03, .22 + i * .03), [fx, fy, rot] = FLY[i];
+      d.setAttribute('transform', `translate(${fx * f} ${fy * f}) rotate(${rot * f} 200 ${d.getAttribute('cy')})`);
+      d.style.opacity = 1 - f;
+    });
+
+    parts.forEach((part, i) => {
+      const key = part.dataset.k, B = BOX[key], cx = B[0] + B[2] / 2, cy = B[1] + B[3] / 2;
+      const S = rel(cols[key].slot, sb);
+      // Ziel: Mitte der Spalte, so groß wie möglich (in Welt-Einheiten der Endkamera)
+      const ts = Math.min(MAXS[key], (S.width * .86) / (B[2] * M2.k), (S.height * .9) / (B[3] * M2.k));
+      const tx = M2.x0 + (S.left + S.width / 2) / M2.k, ty = M2.y0 + (S.top + S.height / 2) / M2.k;
+      const ee = part.dataset.fixed ? 1 : e, sc = mix(1, ts, ee);
+      part.setAttribute('transform', `translate(${mix(cx, tx, ee)} ${mix(cy, ty, ee)}) scale(${sc}) translate(${-cx} ${-cy})`);
+      part.style.setProperty('--sw', (1.3 / (M.k * sc)).toFixed(3));
+      lines[i].forEach((ln) => {
+        const d = seg(p, ln.a, ln.b);
+        ln.el.style.strokeDashoffset = 1 - d;
+        ln.el.style.visibility = d > 0.002 ? 'visible' : 'hidden';
+        if (ln.fill) ln.el.style.fillOpacity = clamp(d * 4);
+      });
+    });
+    studs.style.opacity = seg(p, .42, .54);
+    wm.style.opacity = 1 - seg(p, .03, .12);
+    if (!still) {
+      const c = seg(p, .62, .72);
+      copy.style.opacity = 1 - c;
+      copy.style.transform = `translateX(${-24 * c}px)`;
+      copy.style.visibility = c > .99 ? 'hidden' : 'visible';
+    }
+    const t = seg(p, .82, .92);
+    Object.values(cols).forEach((c) => { c.txt.style.opacity = t; });
+    hint.style.opacity = 1 - seg(p, 0, .04);
+    root.classList.toggle('armed', p > .88);
+  };
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    if (still) return paint(1);
+    const b = wrap.getBoundingClientRect();
+    paint(clamp(-b.top / (b.height - innerHeight)));
+  };
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', onScroll);
+  if (document.fonts) document.fonts.ready.then(onScroll);
+  update();
+}
+

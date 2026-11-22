@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import { settings, telLink } from '../lib/data.js';
+const s = settings;
+const tel = s.filialen[0]?.telefon;
+const offen = String(s.impressum?.anschrift || '').startsWith('[') || String(s.impressum?.ust_id || '').startsWith('[');
+---
+<Base title="Impressum – Marco Cavalli" noindex>
+  <main class="textpage">
+    <h1>Impressum</h1>
+    {offen && <p class="todo">Noch offen: Geschäftsanschrift und USt-ID – im Admin-Bereich unter „Öffnungszeiten &amp; Kontakt → Impressum“ eintragen. Vor dem Livegang prüfen lassen.</p>}
+    <h2>Angaben gemäß § 5 DDG</h2>
+    <p>Malik Moden GmbH<br />{s.impressum?.anschrift}</p>
+    <h2>Vertreten durch</h2><p>Geschäftsführer: Saleem Malik</p>
+    <h2>Kontakt</h2><p>Telefon: <a href={telLink(tel)}>{tel}</a><br />E-Mail: <a href={`mailto:${s.email}`}>{s.email}</a></p>
+    <h2>Registereintrag</h2><p>Registergericht: Amtsgericht Offenbach am Main<br />Registernummer: HRB 42129</p>
+    <h2>Umsatzsteuer-ID</h2><p>Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG: {s.impressum?.ust_id}</p>
+    <h2>Marke</h2><p>Marco Cavalli® ist eine eingetragene Marke der Malik Moden GmbH.</p>
+  </main>
+</Base>

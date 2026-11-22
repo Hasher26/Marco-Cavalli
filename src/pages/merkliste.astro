@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import { settings, routeLink } from '../lib/data.js';
+const s = settings;
+const o = s.oeffnungszeiten;
+---
+<Base title="Merkliste – Marco Cavalli" noindex current="/merkliste/">
+  <main class="textpage">
+    <h1>Merkliste</h1>
+    <p class="lead">Ihre gemerkten Stücke – zeigen Sie die Liste einfach im Laden vor, dann finden wir alles schnell für Sie.</p>
+    <ul class="favs" id="favs"></ul>
+    <p class="favempty" id="favempty" hidden>Noch nichts gemerkt. Tippen Sie bei einem Produkt auf „Merken“. <a href="/">Zur Kollektion →</a></p>
+    <button class="clear" id="clear" type="button" hidden>Merkliste leeren</button>
+    <section class="visitm">
+      <h2>Hier anprobieren</h2>
+      {s.filialen.map((f) => <p><b>{f.strasse}</b>, {f.ort} · <a href={routeLink(f)}>Route planen</a></p>)}
+      <p>{o.tage} {o.von.replace(/^0/, '')} – {o.bis} Uhr · Parkplätze vor Ort</p>
+    </section>
+  </main>
+  <script is:inline>
+    {
+      const ul = document.getElementById('favs'), empty = document.getElementById('favempty'), clear = document.getElementById('clear');
+      const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+      const draw = () => {
+        const l = MC_FAV.get();
+        ul.innerHTML = l.map((x) => `<li><span class="sw" style="background:${esc(x.hex)}"></span><a class="t" href="${esc(x.page)}" style="text-decoration:none"><b>${esc(x.title)}</b><span>${esc(x.farbe)} · ${esc(x.cat)}</span></a><button type="button" data-id="${esc(x.id)}">Entfernen</button></li>`).join('');
+        empty.hidden = l.length > 0; clear.hidden = !l.length;
+        ul.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { MC_FAV.set(MC_FAV.get().filter((x) => x.id !== b.dataset.id)); draw(); }));
+      };
+      clear.addEventListener('click', () => { MC_FAV.set([]); draw(); });
+      addEventListener('storage', draw);
+      draw();
+    }
+  </script>
+</Base>

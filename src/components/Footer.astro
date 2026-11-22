@@ -1,0 +1,24 @@
+---
+import { settings, kategorien, telLink, routeLink } from '../lib/data.js';
+const s = settings;
+const o = s.oeffnungszeiten;
+---
+<footer class="foot">
+  <div class="in">
+    <div><p class="brand">MARCO CAVALLI<small>Exclusive</small></p><p style="margin-top:12px">Herrenausstatter in Dreieich-Sprendlingen.<br />{s.preis_hinweis}.</p></div>
+    <div><h4>Kollektion</h4><ul>{kategorien.map((k) => <li><a href={`/${k.slug}/`}>{k.name}</a></li>)}<li><a href="/#kinder">Kinder</a></li></ul></div>
+    <div>
+      {s.filialen.map((f, i) => (
+        <Fragment>
+          <h4 style={i ? 'margin-top:18px' : undefined}>{f.strasse}</h4>
+          <p>{f.ort}<br /><a href={telLink(f.telefon)}>{f.telefon}</a><br /><a href={routeLink(f)}>Route planen</a></p>
+        </Fragment>
+      ))}
+    </div>
+    <div><h4>Öffnungszeiten</h4><p>{o.tage} {o.von.replace(/^0/, '')} – {o.bis} Uhr<br />Verkaufsoffene Sonntage</p>
+      <h4 style="margin-top:18px">Anfahrt</h4><p>{s.anfahrt}</p></div>
+    <div><h4>Folgen</h4><ul>{(s.social || []).map((x) => <li><a href={x.url}>{x.name}</a></li>)}</ul>
+      <h4 style="margin-top:18px">Rechtliches</h4><ul><li><a href="/impressum/">Impressum</a></li><li><a href="/datenschutz/">Datenschutz</a></li><li><a href={`mailto:${s.email}`}>{s.email}</a></li></ul></div>
+  </div>
+  <p class="legal">© Malik Moden GmbH · Marco Cavalli® ist eine eingetragene Marke der Malik Moden GmbH</p>
+</footer>

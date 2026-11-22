@@ -1,0 +1,9 @@
+name: Smoking Weiß
+bild: ''
+kategorie: content/kategorien/anzuege.yml
+unterkategorie: content/unterkategorien/smoking.yml
+farbe: content/farben/weiss.yml
+fuer: herren
+uebergroesse: false
+preis: ''
+sichtbar: true
