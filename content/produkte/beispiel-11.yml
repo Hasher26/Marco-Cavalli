@@ -1,8 +1,8 @@
 name: Kinder-Dreiteiler Navy
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/dreiteiler.yml
-farbe: content/farben/navy.yml
+kategorie: anzuege
+unterkategorie: dreiteiler
+farbe: navy
 fuer: kinder
 uebergroesse: false
 preis: ''

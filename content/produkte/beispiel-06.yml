@@ -1,8 +1,8 @@
 name: Smoking Weiß
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/smoking.yml
-farbe: content/farben/weiss.yml
+kategorie: anzuege
+unterkategorie: smoking
+farbe: weiss
 fuer: herren
 uebergroesse: false
 preis: ''

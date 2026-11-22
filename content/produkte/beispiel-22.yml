@@ -1,8 +1,8 @@
 name: Krawatte mit Einstecktuch Bordeaux
 bild: ''
-kategorie: content/kategorien/accessoires.yml
-unterkategorie: content/unterkategorien/krawatten.yml
-farbe: content/farben/bordeaux.yml
+kategorie: accessoires
+unterkategorie: krawatten
+farbe: bordeaux
 fuer: herren
 uebergroesse: false
 preis: ''

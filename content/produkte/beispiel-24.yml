@@ -1,8 +1,8 @@
 name: Hosenträger Schwarz
 bild: ''
-kategorie: content/kategorien/accessoires.yml
-unterkategorie: content/unterkategorien/hosentraeger.yml
-farbe: content/farben/schwarz.yml
+kategorie: accessoires
+unterkategorie: hosentraeger
+farbe: schwarz
 fuer: herren
 uebergroesse: false
 preis: ''

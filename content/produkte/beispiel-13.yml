@@ -1,8 +1,8 @@
 name: Mantel Schwarz
 bild: ''
-kategorie: content/kategorien/maentel.yml
+kategorie: maentel
 unterkategorie: ''
-farbe: content/farben/schwarz.yml
+farbe: schwarz
 fuer: herren
 uebergroesse: true
 preis: ''

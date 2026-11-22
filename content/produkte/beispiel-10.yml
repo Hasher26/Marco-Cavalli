@@ -1,8 +1,8 @@
 name: Anzughose Schwarz
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/anzughose.yml
-farbe: content/farben/schwarz.yml
+kategorie: anzuege
+unterkategorie: anzughose
+farbe: schwarz
 fuer: herren
 uebergroesse: true
 preis: ''

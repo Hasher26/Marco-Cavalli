@@ -1,0 +1,176 @@
+# Admin-Bereich unter /admin (Sveltia CMS)
+# Anmeldung: GitHub-Login über Netlify (Einrichtung siehe README).
+
+backend:
+  name: github
+  repo: Hasher26/Marco-Cavalli
+  branch: main
+  commit_messages:
+    create: "Admin: {{collection}} „{{slug}}“ angelegt"
+    update: "Admin: {{collection}} „{{slug}}“ geändert"
+    delete: "Admin: {{collection}} „{{slug}}“ gelöscht"
+    uploadMedia: "Admin: Foto „{{path}}“ hochgeladen"
+    deleteMedia: "Admin: Foto „{{path}}“ gelöscht"
+
+site_url: https://marco-cavalli.de
+display_url: https://marco-cavalli.de
+logo:
+  src: /favicon.svg
+
+media_folder: public/uploads
+public_folder: /uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: produkte
+    label: Produkte
+    label_singular: Produkt
+    description: Alles, was auf den Kategorieseiten gezeigt wird. Ausblenden statt löschen geht über „Auf der Webseite anzeigen“.
+    folder: content/produkte
+    extension: yml
+    format: yaml
+    create: true
+    slug: "{{name}}"
+    summary: "{{name}}"
+    sortable_fields: [name]
+    fields:
+      - { label: Name, name: name, widget: string, hint: "z. B. „Smoking Schwarz“ oder „Dreiteiler Navy“" }
+      - { label: Foto, name: bild, widget: image, required: false, hint: "Am besten hochkant fotografiert, vor ruhigem Hintergrund." }
+      - { label: Kategorie, name: kategorie, widget: relation, collection: kategorien, value_field: "{{slug}}", search_fields: [name], display_fields: [name] }
+      - { label: Unterkategorie, name: unterkategorie, widget: relation, collection: unterkategorien, value_field: "{{slug}}", search_fields: [name], display_fields: [name], required: false, hint: "Nur wählen, wenn sie zur Kategorie passt, z. B. Anzüge → Smoking." }
+      - { label: Farbe, name: farbe, widget: relation, collection: farben, value_field: "{{slug}}", search_fields: [name], display_fields: [name] }
+      - label: Für
+        name: fuer
+        widget: select
+        default: herren
+        options:
+          - { label: Herren, value: herren }
+          - { label: Kinder, value: kinder }
+      - { label: "Auch in Übergröße (bis 80)", name: uebergroesse, widget: boolean, default: false, required: false }
+      - { label: Preis (optional), name: preis, widget: string, required: false, hint: "z. B. „149 €“ oder „ab 120 €“ – leer lassen, wenn kein Preis gezeigt werden soll." }
+      - { label: Auf der Webseite anzeigen, name: sichtbar, widget: boolean, default: true, required: false }
+
+  - name: kategorien
+    label: Kategorien
+    label_singular: Kategorie
+    description: Hauptkategorien im Menü (Anzüge, Mäntel, …). Der Dateiname wird zur Adresse, z. B. /anzuege/.
+    folder: content/kategorien
+    extension: yml
+    format: yaml
+    create: true
+    slug: "{{name}}"
+    summary: "{{name}}"
+    sortable_fields: [reihenfolge, name]
+    fields:
+      - { label: Name (Mehrzahl), name: name, widget: string }
+      - { label: Einzahl, name: einzahl, widget: string, hint: "z. B. „Anzug“ – für Texte wie „1 Anzug“." }
+      - { label: Reihenfolge im Menü, name: reihenfolge, widget: number, value_type: int, default: 10 }
+      - { label: Auf der Webseite anzeigen, name: sichtbar, widget: boolean, default: true, required: false }
+      - { label: Kurztext (Startseite), name: kurztext, widget: string, required: false }
+      - { label: Preis-Hinweis (optional), name: preis_hinweis, widget: string, required: false }
+      - { label: Einleitung auf der Kategorieseite, name: intro, widget: text, required: false }
+      - { label: Beschreibung für Google, name: seo_beschreibung, widget: text, required: false }
+      - { label: "Filter „Herren / Kinder“ anzeigen", name: filter_herren_kinder, widget: boolean, default: false, required: false }
+      - { label: "Filter „Übergrößen“ anzeigen", name: filter_uebergroesse, widget: boolean, default: false, required: false }
+      - label: Zeichnung in der Startseiten-Animation
+        name: zeichnung
+        widget: select
+        default: keine
+        options:
+          - { label: Anzug, value: anzug }
+          - { label: Mantel, value: mantel }
+          - { label: Hemd, value: hemd }
+          - { label: Fliege (Accessoires), value: fliege }
+          - { label: Schuhe, value: schuhe }
+          - { label: Keine, value: keine }
+
+  - name: unterkategorien
+    label: Unterkategorien
+    label_singular: Unterkategorie
+    description: Werden auf der Kategorieseite automatisch zu Filtern, sobald ein Produkt sie nutzt.
+    folder: content/unterkategorien
+    extension: yml
+    format: yaml
+    create: true
+    slug: "{{name}}"
+    summary: "{{name}}"
+    sortable_fields: [kategorie, reihenfolge, name]
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Gehört zu Kategorie, name: kategorie, widget: relation, collection: kategorien, value_field: "{{slug}}", search_fields: [name], display_fields: [name] }
+      - { label: Reihenfolge, name: reihenfolge, widget: number, value_type: int, default: 10 }
+      - { label: Als Kachel auf der Startseite zeigen, name: startseite, widget: boolean, default: false, required: false }
+      - { label: Foto für die Startseiten-Kachel (optional), name: bild, widget: image, required: false }
+      - { label: Kurztext (Startseiten-Kachel), name: kurztext, widget: string, required: false }
+
+  - name: farben
+    label: Farben
+    label_singular: Farbe
+    folder: content/farben
+    extension: yml
+    format: yaml
+    create: true
+    slug: "{{name}}"
+    summary: "{{name}}"
+    fields:
+      - { label: Name, name: name, widget: string }
+      - { label: Farbcode, name: farbcode, widget: color, hint: Bestimmt den Farbpunkt im Filter. }
+
+  - name: einstellungen
+    label: Öffnungszeiten & Kontakt
+    files:
+      - name: einstellungen
+        label: Öffnungszeiten & Kontakt
+        file: content/einstellungen.yml
+        format: yaml
+        fields:
+          - { label: Preis-Botschaft (Startseite), name: preis_hinweis, widget: string }
+          - label: Öffnungszeiten
+            name: oeffnungszeiten
+            widget: object
+            fields:
+              - { label: Tage (Anzeige), name: tage, widget: string }
+              - { label: "Öffnet um (HH:MM)", name: von, widget: string }
+              - { label: "Schließt um (HH:MM)", name: bis, widget: string }
+          - label: Verkaufsoffene Sonntage
+            name: sonntag
+            widget: object
+            fields:
+              - { label: Hinweistext, name: hinweis, widget: string }
+              - { label: "Öffnet um (HH:MM)", name: von, widget: string }
+              - { label: "Schließt um (HH:MM)", name: bis, widget: string }
+              - label: Termine
+                name: termine
+                widget: list
+                required: false
+                field: { label: Datum, name: datum, widget: datetime, time_format: false, date_format: DD.MM.YYYY, format: YYYY-MM-DD }
+          - label: Filialen
+            name: filialen
+            widget: list
+            summary: "{{fields.strasse}}"
+            fields:
+              - { label: Name, name: name, widget: string }
+              - { label: Straße und Hausnummer, name: strasse, widget: string }
+              - { label: PLZ und Ort, name: ort, widget: string }
+              - { label: Telefon, name: telefon, widget: string }
+              - { label: Telefonnummer hat WhatsApp, name: whatsapp, widget: boolean, default: true, required: false }
+          - { label: "Anfahrt (Parken, Bus)", name: anfahrt, widget: string }
+          - { label: E-Mail, name: email, widget: string }
+          - { label: WhatsApp-Nummer für Händleranfragen, name: grosshandel_whatsapp, widget: string, required: false }
+          - label: Social Media
+            name: social
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { label: Name, name: name, widget: string }
+              - { label: Link, name: url, widget: string }
+          - label: Impressum
+            name: impressum
+            widget: object
+            fields:
+              - { label: Geschäftsanschrift, name: anschrift, widget: string }
+              - { label: USt-ID, name: ust_id, widget: string }

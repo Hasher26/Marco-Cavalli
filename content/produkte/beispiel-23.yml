@@ -1,8 +1,8 @@
 name: Gürtel Braun
 bild: ''
-kategorie: content/kategorien/accessoires.yml
-unterkategorie: content/unterkategorien/guertel.yml
-farbe: content/farben/braun.yml
+kategorie: accessoires
+unterkategorie: guertel
+farbe: braun
 fuer: herren
 uebergroesse: false
 preis: ''

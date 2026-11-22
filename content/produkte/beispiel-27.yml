@@ -1,8 +1,8 @@
 name: Schuh Schwarz
 bild: ''
-kategorie: content/kategorien/schuhe.yml
+kategorie: schuhe
 unterkategorie: ''
-farbe: content/farben/schwarz.yml
+farbe: schwarz
 fuer: herren
 uebergroesse: false
 preis: ''

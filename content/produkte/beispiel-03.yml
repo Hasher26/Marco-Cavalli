@@ -1,8 +1,8 @@
 name: Dreiteiler Grau
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/dreiteiler.yml
-farbe: content/farben/grau.yml
+kategorie: anzuege
+unterkategorie: dreiteiler
+farbe: grau
 fuer: herren
 uebergroesse: true
 preis: ''

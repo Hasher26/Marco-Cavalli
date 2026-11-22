@@ -1,8 +1,8 @@
 name: Socken Navy
 bild: ''
-kategorie: content/kategorien/accessoires.yml
-unterkategorie: content/unterkategorien/socken.yml
-farbe: content/farben/navy.yml
+kategorie: accessoires
+unterkategorie: socken
+farbe: navy
 fuer: herren
 uebergroesse: false
 preis: ''

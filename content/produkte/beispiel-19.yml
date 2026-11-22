@@ -1,8 +1,8 @@
 name: Hemd Schwarz
 bild: ''
-kategorie: content/kategorien/hemden.yml
+kategorie: hemden
 unterkategorie: ''
-farbe: content/farben/schwarz.yml
+farbe: schwarz
 fuer: herren
 uebergroesse: false
 preis: ''

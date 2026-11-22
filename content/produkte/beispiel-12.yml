@@ -1,8 +1,8 @@
 name: Kinder-Smoking Schwarz
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/smoking.yml
-farbe: content/farben/schwarz.yml
+kategorie: anzuege
+unterkategorie: smoking
+farbe: schwarz
 fuer: kinder
 uebergroesse: false
 preis: ''

@@ -1,8 +1,8 @@
 name: Zweiteiler Navy
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/zweiteiler.yml
-farbe: content/farben/navy.yml
+kategorie: anzuege
+unterkategorie: zweiteiler
+farbe: navy
 fuer: herren
 uebergroesse: true
 preis: ''

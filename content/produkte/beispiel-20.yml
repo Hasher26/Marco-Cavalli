@@ -1,8 +1,8 @@
 name: Hemd Rosa
 bild: ''
-kategorie: content/kategorien/hemden.yml
+kategorie: hemden
 unterkategorie: ''
-farbe: content/farben/rosa.yml
+farbe: rosa
 fuer: herren
 uebergroesse: false
 preis: ''
