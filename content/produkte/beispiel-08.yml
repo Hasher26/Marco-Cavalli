@@ -1,8 +1,8 @@
 name: Şal û Şapik Grau
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/kurdischer-anzug.yml
-farbe: content/farben/grau.yml
+kategorie: anzuege
+unterkategorie: kurdischer-anzug
+farbe: grau
 fuer: herren
 uebergroesse: false
 preis: ''

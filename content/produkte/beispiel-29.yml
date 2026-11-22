@@ -1,8 +1,8 @@
 name: Schuh Cognac
 bild: ''
-kategorie: content/kategorien/schuhe.yml
+kategorie: schuhe
 unterkategorie: ''
-farbe: content/farben/cognac.yml
+farbe: cognac
 fuer: herren
 uebergroesse: false
 preis: ''

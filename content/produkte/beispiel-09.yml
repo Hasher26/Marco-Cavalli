@@ -1,8 +1,8 @@
 name: Sakko & Weste Bordeaux
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/sakko-weste.yml
-farbe: content/farben/bordeaux.yml
+kategorie: anzuege
+unterkategorie: sakko-weste
+farbe: bordeaux
 fuer: herren
 uebergroesse: true
 preis: ''

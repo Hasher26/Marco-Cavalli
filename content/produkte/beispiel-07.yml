@@ -1,8 +1,8 @@
 name: Hochzeitsanzug Beige
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/hochzeitsanzug.yml
-farbe: content/farben/beige.yml
+kategorie: anzuege
+unterkategorie: hochzeitsanzug
+farbe: beige
 fuer: herren
 uebergroesse: false
 preis: ''

@@ -1,8 +1,8 @@
 name: Fliege Schwarz
 bild: ''
-kategorie: content/kategorien/accessoires.yml
-unterkategorie: content/unterkategorien/fliegen.yml
-farbe: content/farben/schwarz.yml
+kategorie: accessoires
+unterkategorie: fliegen
+farbe: schwarz
 fuer: herren
 uebergroesse: false
 preis: ''

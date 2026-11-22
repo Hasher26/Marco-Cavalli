@@ -1,8 +1,8 @@
 name: Doppelreiher Schwarz
 bild: ''
-kategorie: content/kategorien/anzuege.yml
-unterkategorie: content/unterkategorien/doppelreiher.yml
-farbe: content/farben/schwarz.yml
+kategorie: anzuege
+unterkategorie: doppelreiher
+farbe: schwarz
 fuer: herren
 uebergroesse: false
 preis: ''

@@ -1,8 +1,8 @@
 name: Schuh Braun
 bild: ''
-kategorie: content/kategorien/schuhe.yml
+kategorie: schuhe
 unterkategorie: ''
-farbe: content/farben/braun.yml
+farbe: braun
 fuer: herren
 uebergroesse: false
 preis: ''

@@ -1,7 +1,7 @@
 # Marco Cavalli – Webseite
 
 Webseite des Herrenausstatters **Marco Cavalli** (Malik Moden GmbH) in Dreieich-Sprendlingen.
-Gebaut mit [Astro](https://astro.build) als statische Seite, Inhalte werden im Admin-Bereich ([Pages CMS](https://pagescms.org)) gepflegt.
+Gebaut mit [Astro](https://astro.build) als statische Seite. Inhalte werden im eigenen Admin-Bereich unter **`/admin`** gepflegt ([Sveltia CMS](https://sveltiacms.app), kostenlos, Open Source).
 
 ## Was wo liegt
 
@@ -13,19 +13,27 @@ Gebaut mit [Astro](https://astro.build) als statische Seite, Inhalte werden im A
 | `content/farben/` | Farben mit Farbcode für die Farbfilter |
 | `content/einstellungen.yml` | Öffnungszeiten, verkaufsoffene Sonntage, Filialen, Anfahrt, Social Media, Impressum |
 | `public/uploads/` | Hochgeladene Fotos |
-| `.pages.yml` | Was im Admin-Bereich bearbeitet werden kann |
+| `public/admin/config.yml` | Was im Admin-Bereich bearbeitet werden kann |
 | `src/` | Code der Seiten (Startseite mit Animation, Kategorieseiten, Merkliste, Impressum …) |
 
 ## Live gehen (einmalig)
 
 1. **Hosting bei Netlify (kostenlos):** Auf [netlify.com](https://www.netlify.com) mit GitHub anmelden → „Add new site“ → „Import an existing project“ → dieses Repo wählen. Build-Einstellungen kommen automatisch aus `netlify.toml`. Danach wird die Seite bei jeder Änderung automatisch neu gebaut.
 2. **Domain:** z. B. `marco-cavalli.de` kaufen und in Netlify unter „Domain management“ verbinden. Dann die Domain in `astro.config.mjs` (`site`) und `public/robots.txt` eintragen.
-3. **Admin-Bereich:** Auf [app.pagescms.org](https://app.pagescms.org) mit GitHub anmelden, die Pages-CMS-App für dieses Repo installieren und das Repo öffnen.
-4. **Zugang für den Vater:** In Pages CMS unter „Settings → Collaborators“ seine E-Mail-Adresse einladen. Er braucht **kein** GitHub-Konto und meldet sich per E-Mail-Link an.
+3. **Admin-Bereich einrichten (einmalig, ca. 10 Min.):**
+   1. Auf GitHub unter *Settings → Developer settings → OAuth Apps → New OAuth App* eine App anlegen:
+      - Application name: `Marco Cavalli Admin`
+      - Homepage URL: die Netlify-Adresse (später die Domain)
+      - Authorization callback URL: `https://api.netlify.com/auth/done`
+   2. „Generate a new client secret“ klicken, Client ID und Client Secret notieren.
+   3. In Netlify: *Project configuration → Access & security → OAuth → Install provider* → GitHub, Client ID und Secret eintragen.
+   4. Fertig: `https://<eure-seite>/admin` öffnen → „Sign In with GitHub“.
+4. **Zugang für den Vater:** Er legt sich ein kostenloses GitHub-Konto an. Im Repo unter *Settings → Collaborators → Add people* einladen (Schreibrechte). Danach meldet er sich unter `/admin` mit „Sign In with GitHub“ an – auch am Handy.
 5. **Vor dem Livegang:** Beispielprodukte (`content/produkte/beispiel-*.yml`) löschen bzw. durch echte ersetzen, Geschäftsanschrift + USt-ID im Admin unter „Öffnungszeiten & Kontakt → Impressum“ eintragen, Datenschutzerklärung ergänzen.
 
 ## Im Admin-Bereich (für die Pflege)
 
+- **Anmelden:** `https://<eure-seite>/admin` → „Sign In with GitHub“.
 - **Produkte:** „Produkte → Neu“: Name, Foto (direkt vom Handy), Kategorie, Unterkategorie, Farbe, Herren/Kinder, Übergröße, optional Preis. Speichern – nach ca. 1–2 Minuten ist es online.
 - **Neue Unterkategorie** (z. B. bei Hemden „Smokinghemd“): „Unterkategorien → Neu“, Kategorie auswählen. Sobald ein Produkt sie nutzt, erscheint sie als Filter.
 - **Neue Farbe:** „Farben → Neu“ mit Name und Farbcode (z. B. `#1F2A44`).
@@ -40,4 +48,4 @@ npm run dev      # lokale Vorschau auf http://localhost:4321
 npm run build    # fertige Seite in dist/
 ```
 
-Schriften werden lokal ausgeliefert (`@fontsource`), nicht von Google-Servern (DSGVO).
+Schriften werden lokal ausgeliefert (`@fontsource`), nicht von Google-Servern (DSGVO). Das Admin-Programm (`@sveltia/cms`) wird beim Bauen aus `node_modules` nach `public/admin/` kopiert (`scripts/copy-cms.mjs`).

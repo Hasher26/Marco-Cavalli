@@ -1,8 +1,8 @@
 name: Hemd Hellblau
 bild: ''
-kategorie: content/kategorien/hemden.yml
+kategorie: hemden
 unterkategorie: ''
-farbe: content/farben/hellblau.yml
+farbe: hellblau
 fuer: herren
 uebergroesse: false
 preis: ''

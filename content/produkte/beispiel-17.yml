@@ -1,8 +1,8 @@
 name: Hemd Weiß
 bild: ''
-kategorie: content/kategorien/hemden.yml
+kategorie: hemden
 unterkategorie: ''
-farbe: content/farben/weiss.yml
+farbe: weiss
 fuer: herren
 uebergroesse: false
 preis: ''
