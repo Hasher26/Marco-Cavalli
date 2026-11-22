@@ -12,8 +12,8 @@ backend:
     uploadMedia: "Admin: Foto „{{path}}“ hochgeladen"
     deleteMedia: "Admin: Foto „{{path}}“ gelöscht"
 
-site_url: https://marco-cavalli.de
-display_url: https://marco-cavalli.de
+site_url: https://marco-cavalli.netlify.app
+display_url: https://marco-cavalli.netlify.app
 logo:
   src: /favicon.svg
 

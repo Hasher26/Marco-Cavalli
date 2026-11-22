@@ -20,7 +20,7 @@ Gebaut mit [Astro](https://astro.build) als statische Seite. Inhalte werden im e
 ## Live gehen (einmalig)
 
 1. **Hosting bei Netlify (kostenlos):** Auf [netlify.com](https://www.netlify.com) mit GitHub anmelden → „Add new site“ → „Import an existing project“ → dieses Repo wählen. Build-Einstellungen kommen automatisch aus `netlify.toml`. Danach wird die Seite bei jeder Änderung automatisch neu gebaut.
-2. **Domain:** z. B. `marco-cavalli.de` kaufen und in Netlify unter „Domain management“ verbinden. Dann die Domain in `astro.config.mjs` (`site`) und `public/robots.txt` eintragen.
+2. **Domain:** z. B. `marco-cavalli.de` kaufen und in Netlify unter „Domain management“ verbinden und als *Primary domain* setzen. Sitemap, robots.txt und die Google-Adressen der Seiten passen sich beim nächsten Build automatisch an (Netlify liefert die Adresse als `URL`). Im Admin unter `public/admin/config.yml` ggf. `site_url` anpassen.
 3. **Admin-Login einrichten (einmalig, ca. 10 Min.):**
    1. **GitHub-Schlüssel erstellen:** github.com → Profilbild → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*. Name: `Marco Cavalli Admin`, Ablaufdatum möglichst lang, *Repository access: Only select repositories → Marco-Cavalli*, *Permissions → Contents: Read and write*. Erstellen und den Schlüssel kopieren.
    2. **In Netlify eintragen:** *Project configuration → Environment variables → Add a variable*:
