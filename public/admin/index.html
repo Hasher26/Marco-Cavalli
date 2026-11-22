@@ -6,8 +6,36 @@
   <meta name="robots" content="noindex, nofollow" />
   <title>Admin – Marco Cavalli</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
   <script src="./sveltia-cms.js"></script>
+  <script>
+    // Anmeldung per Admin-Passwort: Der Login-Knopf öffnet /api/admin-login auf dieser Seite (Netlify Function).
+    CMS.init({
+      config: {
+        backend: {
+          name: 'github',
+          repo: 'Hasher26/Marco-Cavalli',
+          branch: 'main',
+          base_url: location.origin,
+          auth_endpoint: 'api/admin-login',
+        },
+      },
+    });
+
+    // Login-Bildschirm vereinfachen: nur „Mit Passwort anmelden“ zeigen
+    const tidy = () => {
+      document.querySelectorAll('button').forEach((b) => {
+        const t = b.textContent || '';
+        if (t.includes('Local Repository') || t.includes('Lokales Repository') || t.includes('Access Token') || t.includes('Zugriffstoken')) b.style.display = 'none';
+        else if (/Sign In with|Anmelden mit/.test(t) && t.includes('GitHub')) b.textContent = 'Mit Passwort anmelden';
+      });
+      document.querySelectorAll('p').forEach((el) => {
+        if (/root directory|Stammverzeichnis|Hauptverzeichnis/.test(el.textContent || '')) el.style.display = 'none';
+      });
+    };
+    new MutationObserver(tidy).observe(document.body, { childList: true, subtree: true });
+  </script>
 </body>
 </html>
